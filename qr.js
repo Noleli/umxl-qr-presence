@@ -1,20 +1,41 @@
 $(document).ready(load);
 
 function load()
-{	
+{
+	$("#name").focus();
+	$("#login").submit(doSubmit);
+}
+
+function doSubmit()
+{
+	buildXml();
+	// TODO: send it to the server
+	return false;
+}
+
+function buildXml()
+{
 	var room = $("#room");
-	var xml = $("<sighting><who><core><device-id>Ekahau.00:0B:6C:20:08:B0</device-id><user>user1@test.eecs.umich.edu</user></core></who><where><core><building>CSE</building><floor>4</floor><room>4C91</room><confidence>0.923</confidence><geo><latitude>-83.716574664248</latitude><longitude>42.29431090862</longitude><altitude>268.0</altitude></geo><accuracy>5</accuracy></core><ekahau><map-coordinates><x>945.08</x><y>1435.26</y></map-coordinates></ekahau></where><when><core><timestamp>1146254882</timestamp><localtime><year>2006</year><month>4</month><day>28</day><weekday>6</weekday><hour>16</hour><minute>8</minute><second>2</second><week-of-year>17</week-of-year><week-of-month>5</week-of-month><day-of-week-in-month>4</day-of-week-in-month><day-of-year>118</day-of-year><timezone>EDT</timezone></localtime><gmtime><year>2006</year><month>4</month><day>28</day><weekday>6</weekday><hour>20</hour><minute>8</minute><second>2</second><week-of-year>17</week-of-year><week-of-month>5</week-of-month><day-of-week-in-month>4</day-of-week-in-month><day-of-year>118</day-of-year><timezone>GMT</timezone></gmtime><expires>1146254892</expires></core></when></sighting>");
 	
-	$("#login").submit(
-		function()
-		{
-			console.log(xml.html());
-			xml.find("room").text(room.val());
-			xml.find("user").text($("#name").val());
-			$("#dump").text(formatXml("<sighting>" + xml.html() + "</sighting>"));
-			return false;
-		}
-	);
+	// XML format here: http://whereabouts.eecs.umich.edu/wiki/doku.php?id=user_guide#location_reports
+	// <sighting><who><core><device-id>Ekahau.00:0B:6C:20:08:B0</device-id><user>user1@test.eecs.umich.edu</user></core></who><where><core><building>CSE</building><floor>4</floor><room>4C91</room><confidence>0.923</confidence><geo><latitude>-83.716574664248</latitude><longitude>42.29431090862</longitude><altitude>268.0</altitude></geo><accuracy>5</accuracy></core><ekahau><map-coordinates><x>945.08</x><y>1435.26</y></map-coordinates></ekahau></where><when><core><timestamp>1146254882</timestamp><localtime><year>2006</year><month>4</month><day>28</day><weekday>6</weekday><hour>16</hour><minute>8</minute><second>2</second><week-of-year>17</week-of-year><week-of-month>5</week-of-month><day-of-week-in-month>4</day-of-week-in-month><day-of-year>118</day-of-year><timezone>EDT</timezone></localtime><gmtime><year>2006</year><month>4</month><day>28</day><weekday>6</weekday><hour>20</hour><minute>8</minute><second>2</second><week-of-year>17</week-of-year><week-of-month>5</week-of-month><day-of-week-in-month>4</day-of-week-in-month><day-of-year>118</day-of-year><timezone>GMT</timezone></gmtime><expires>1146254892</expires></core></when></sighting>
+	
+	// with empty who/core, where/core, and when/core
+	var xml = $("<sighting><who><core></core></who><where><core></core></where><when><core></core></when></sighting>");
+	
+	// add the who
+	xml.find("who > core").append("<user>" + $("#name").val() + "</user>");
+	
+	// add the where
+	xml.find("where > core").append("<room>" + $("#room").val() + "</room>");
+	
+	// add the when
+	var now = new Date()
+	xml.find("when > core").append("<timestamp>" + now.getTime() + "</timestamp>");
+	
+	// for demonstration purposes only…
+	$("#dump").text(formatXml("<sighting>" + xml.html() + "</sighting>"));
+	$("#debug").fadeIn("fast");
 }
 
 var formatXml = this.formatXml = function (xml) {

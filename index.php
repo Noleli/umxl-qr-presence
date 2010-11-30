@@ -6,16 +6,16 @@
 	<script src="qr.js" type="text/javascript"></script>
 </head>
 <body>
-	<h1>The Page</h1>
+	<h1>Your presence is requested</h1>
 	<p>Enter your desired username for this session:</p>
 	
 	<form id="login" name="login">
 		<input id="name" name="name">
-		<input id="room" type="hidden" value="<? echo $_REQUEST["id"]; ?>">
+		<input id="room" type="hidden" value="<? echo $_REQUEST["room"]; ?>">
 		<input type="submit">
 	</form>
 	
-	<div>
+	<div id="debug">
 		<pre id="dump"></pre>
 	</div>
 </body>
